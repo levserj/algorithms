@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -68,7 +70,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private int getRandomCell() {
-        int rndCell = (int) (Math.random() * (last-1));
+        int rndCell = (int) (StdRandom.uniform() * (last-1));
         if (elements[rndCell] == null){
             rndCell = getRandomCell();
         }
