@@ -33,15 +33,15 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // add the item
     public void enqueue(Item item) {
-        if (item == null){
+        if (item == null) {
             throw new IllegalArgumentException();
         }
-        if (elements.length == last) {
-            resize();
-        }
         if (emptyCells.isEmpty()) {
+            if (elements.length == last) {
+                resize();
+            }
             elements[last] = item;
-            last = ++last;
+            last++;
         } else {
             elements[emptyCells.pop()] = item;
         }
@@ -49,29 +49,34 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private void resize() {
-        Item[] temp = (Item[]) new Object[elements.length * 2];
-        for (int i = 0; i < elements.length; i++) {
-            temp[i] = elements[i];
-        }
+        Item[] biggerArray = (Item[]) new Object[elements.length * 2];
+        System.arraycopy(elements, 0, biggerArray, 0, elements.length);
+        elements = biggerArray;
     }
 
     // remove and return a random item
     public Item dequeue() {
-        if (isEmpty()) throw new NoSuchElementException();
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
         int randomCell = getRandomCell();
         Item temp = elements[randomCell];
         elements[randomCell] = null;
-        emptyCells.push(randomCell);
         size--;
-        if (randomCell == last){
+        if (randomCell == last - 1) {
             last--;
+        } else {
+            emptyCells.push(randomCell);
         }
         return temp;
     }
 
     private int getRandomCell() {
-        int rndCell = (int) (StdRandom.uniform() * (last-1));
-        if (elements[rndCell] == null){
+        if (last == 0) {
+            return 0;
+        }
+        int rndCell = StdRandom.uniform(last);
+        if (elements[rndCell] == null) {
             rndCell = getRandomCell();
         }
         return rndCell;
@@ -84,17 +89,18 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     // return an independent iterator over items in random order
-    public Iterator<Item> iterator(){
+    public Iterator<Item> iterator() {
         return new RandomizedQueueIterator();
     }
 
-    private class RandomizedQueueIterator implements Iterator<Item>{
+    private class RandomizedQueueIterator implements Iterator<Item> {
 
-        private int index = 0;
+        private int[] returned = new int[size];
+        private int elementsLeft = size;
 
         @Override
         public boolean hasNext() {
-            return index < last;
+            return elementsLeft > 0;
         }
 
         @Override
@@ -102,17 +108,23 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            if (elements[index] == null) {
-                index++;
-                next();
-            }
-            return elements[index];
+            return elements[getNextUnreturnedIndex()];
         }
 
         @Override
         public void remove() {
-                throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException();
 
+        }
+
+        private int getNextUnreturnedIndex() {
+            int index = getRandomCell();
+            if (returned[index] == 1) {
+                getNextUnreturnedIndex();
+            }
+            returned[index] = 1;
+            elementsLeft--;
+            return index;
         }
     }
 
@@ -155,7 +167,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         /**
          * Adds the item to this stack.
          *
-         * @param  item the item to add
+         * @param item the item to add
          */
         public void push(Item item) {
             Node<Item> oldfirst = first;
