@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.StdIn;
+
 /**
  * Created by sl on 28.06.17.
  */
@@ -6,10 +8,10 @@ public class Permutation {
 
     public static void main(String[] args) {
         int k = Integer.parseInt(args[0]);
-        for (int i = 1; i < args.length; i++) {
-            elements.enqueue(args[i]);
+        while (!StdIn.isEmpty()) {
+            elements.enqueue(StdIn.readString());
         }
-        for (int j=0; j<3; j++){
+        for (int j = 0; j < k; j++) {
             System.out.println(elements.dequeue());
         }
     }

@@ -95,7 +95,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private class RandomizedQueueIterator implements Iterator<Item> {
 
-        private int[] returned = new int[size];
+        private int[] returned = new int[elements.length];
         private int elementsLeft = size;
 
         @Override
