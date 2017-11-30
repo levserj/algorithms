@@ -36,11 +36,6 @@ public class BruteCollinearPoints {
                         if (copyPoints[i].slopeTo(copyPoints[j]) == copyPoints[i].slopeTo(copyPoints[k]) &&
                                 copyPoints[i].slopeTo(copyPoints[j]) == copyPoints[i].slopeTo(copyPoints[m])) {
                             LineSegment newSegment = new LineSegment(copyPoints[i], copyPoints[m]);
-                            for (LineSegment segment : segments) {
-                                if (newSegment.equals(segment)) {
-                                    continue inner;
-                                }
-                            }
                             segments[segmentIndex] = newSegment;
                             segmentIndex++;
                         }
