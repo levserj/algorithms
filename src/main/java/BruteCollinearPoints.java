@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.Objects;
 
 /**
@@ -7,9 +6,7 @@ import java.util.Objects;
  */
 public class BruteCollinearPoints {
 
-    private Point[] points;
     private LineSegment[] segments;
-    private int segmentIndex = 0;
 
     // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points) {
@@ -21,26 +18,24 @@ public class BruteCollinearPoints {
                 throw new IllegalArgumentException();
             }
         }
-        Arrays.sort(points);
-        for (int i = 0; i < points.length - 1; i++) {
-            if (points[i].equals(points[i + 1])) {
+        Point[] copyPoints = Arrays.copyOf(points, points.length);
+        Arrays.sort(copyPoints);
+        for (int i = 0; i < copyPoints.length - 1; i++) {
+            if (copyPoints[i].equals(copyPoints[i + 1])) {
                 throw new IllegalArgumentException();
             }
         }
-        this.points = points;
-        this.segments = new LineSegment[points.length];
+        this.segments = new LineSegment[copyPoints.length];
 
-        LinkedList<LineSegment> found = new LinkedList<>();
-        for (int i = 0; i < points.length; i++) {
-/*            Point[] temp = new Point[points.length];*/
-            for (int j = i + 1; j < points.length; j++) {
-/*                if (points[i].slopeTo(points[j]))*/
-                for (int k = j + 1; k < points.length; k++) {
+        int segmentIndex = 0;
+        for (int i = 0; i < copyPoints.length; i++) {
+            for (int j = i + 1; j < copyPoints.length; j++) {
+                for (int k = j + 1; k < copyPoints.length; k++) {
                     inner:
-                    for (int m = k + 1; m < points.length; m++) {
-                        if (points[i].slopeTo(points[j]) == points[i].slopeTo(points[k]) &&
-                                points[i].slopeTo(points[j]) == points[i].slopeTo(points[m])) {
-                            LineSegment newSegment = new LineSegment(points[i], points[m]);
+                    for (int m = k + 1; m < copyPoints.length; m++) {
+                        if (copyPoints[i].slopeTo(copyPoints[j]) == copyPoints[i].slopeTo(copyPoints[k]) &&
+                                copyPoints[i].slopeTo(copyPoints[j]) == copyPoints[i].slopeTo(copyPoints[m])) {
+                            LineSegment newSegment = new LineSegment(copyPoints[i], copyPoints[m]);
                             for (LineSegment segment : segments) {
                                 if (newSegment.equals(segment)) {
                                     continue inner;
@@ -63,7 +58,7 @@ public class BruteCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        return segments;
+        return Arrays.copyOf(segments, segments.length);
     }
 
     public static void main(String[] args) {
